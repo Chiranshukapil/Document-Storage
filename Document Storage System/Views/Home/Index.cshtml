@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="d-flex justify-content-center align-items-center flex-column text-center" style="min-height: 70vh;">
+    <h1 class="display-4 fw-bold mb-3">📁 Welcome to Document Storage System</h1>
+
+    <p class="lead text-muted mb-4">
+        Upload, manage, and organize documents by department, library, and topic.
+    </p>
+
+    <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <a class="btn btn-primary btn-lg px-4" asp-controller="Library" asp-action="Index">
+            📚 View Libraries
+        </a>
+
+        <a class="btn btn-secondary btn-lg px-4" asp-controller="Department" asp-action="Index">
+            🏢 View Departments
+        </a>
+
+        <a class="btn btn-outline-dark btn-lg px-4" asp-controller="Home" asp-action="Privacy">
+            🔒 Privacy Policy
+        </a>
+    </div>
+
+    <p class="text-muted mt-5 small">
+        Built with ASP.NET Core MVC, Identity, Bootstrap 5, and clean design.
+    </p>
+</div>

@@ -1,0 +1,31 @@
+﻿@model Document_Storage_System.Models.Entities.Department
+@{
+    ViewData["Title"] = "Department Members";
+}
+
+<h2>Members of Department: @Model.Name</h2>
+
+@if (!Model.Users.Any())
+{
+    <div class="alert alert-info">No users assigned to this department.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>UserName</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,20 @@
+﻿@model Document_Storage_System.Models.Entities.Library
+
+@{
+    ViewData["Title"] = "Delete Library";
+}
+
+<h2>Confirm Delete</h2>
+
+<h4>Are you sure you want to delete the following library?</h4>
+
+<div>
+    <strong>Name:</strong> @Model.Name <br />
+    <strong>Description:</strong> @Model.Description
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="LibraryId" />
+    <button type="submit" class="btn btn-danger mt-2">Yes, Delete</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Cancel</a>
+</form>

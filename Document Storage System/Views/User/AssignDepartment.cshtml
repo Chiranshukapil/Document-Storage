@@ -1,0 +1,45 @@
+﻿@model List<Document_Storage_System.Models.AppUser>
+@{
+    ViewData["Title"] = "Assign Departments";
+    var departments = ViewBag.Departments as List<Document_Storage_System.Models.Entities.Department>;
+}
+
+<h2>Assign Department to Users</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-success">✅ All users have been assigned a department.</div>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Assign Department</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        <form asp-action="AssignDepartment" method="post">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <select name="departmentId" class="form-select form-select-sm d-inline w-auto">
+                                @foreach (var dept in departments)
+                                {
+                                    <option value="@dept.DepartmentId">@dept.Name</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Assign</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

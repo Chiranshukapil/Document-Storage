@@ -1,0 +1,54 @@
+﻿@model Document_Storage_System.Models.Entities.Topic
+
+@{
+    ViewData["Title"] = "Create Topic";
+    var libraryId = ViewBag.LibraryId as int?;
+    var parentTopics = ViewBag.Topics as List<Document_Storage_System.Models.Entities.Topic>;
+}
+
+<h2>Add New Topic</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <strong>There were some validation errors:</strong>
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="LibraryId" value="@libraryId" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label">Topic Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="ParentTopicId" class="form-label">Parent Topic (optional)</label>
+        <select asp-for="ParentTopicId" class="form-control">
+            <option value="">-- None (Root) --</option>
+            @foreach (var topic in parentTopics)
+            {
+                <option value="@topic.TopicId">@topic.Path</option>
+            }
+        </select>
+        <span asp-validation-for="ParentTopicId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-2">Create</button>
+    <a asp-action="Index" asp-route-libraryId="@libraryId" class="btn btn-secondary mt-2">Cancel</a>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

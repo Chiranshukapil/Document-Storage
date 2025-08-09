@@ -1,0 +1,44 @@
+﻿@model Document_Storage_System.Models.Entities.Document
+@{
+    ViewData["Title"] = "Document Details";
+}
+
+<h2>Document Details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Title</th>
+        <td>@Model.Title</td>
+    </tr>
+    <tr>
+        <th>File Name</th>
+        <td>@Model.FileName</td>
+    </tr>
+    <tr>
+        <th>Content Type</th>
+        <td>@Model.ContentType</td>
+    </tr>
+    <tr>
+        <th>Size</th>
+        <td>@(Math.Round(Model.FileSize / 1024.0, 2)) KB</td>
+    </tr>
+    <tr>
+        <th>Uploaded By</th>
+        <td>@Model.UploadedBy?.UserName</td>
+    </tr>
+    <tr>
+        <th>Uploaded At</th>
+        <td>@Model.CreatedAt.ToString("dd-MM-yyyy HH:mm")</td>
+    </tr>
+    <tr>
+        <th>Topic</th>
+        <td>@Model.Topic?.Path</td>
+    </tr>
+    <tr>
+        <th>Library</th>
+        <td>@Model.Topic?.Library?.Name</td>
+    </tr>
+</table>
+
+<a class="btn btn-success" href="@Model.FilePath" target="_blank">Download</a>
+<a class="btn btn-secondary" asp-action="Index" asp-route-topicId="@Model.TopicId">Back</a>

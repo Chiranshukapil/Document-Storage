@@ -1,0 +1,85 @@
+﻿@model List<Document_Storage_System.Models.ViewModels.LibraryPermissionViewModel>
+
+@{
+    ViewData["Title"] = "Manage Permissions";
+    var libraryName = ViewBag.LibraryName as string;
+}
+
+<h2>Permissions for Library: @libraryName</h2>
+
+<form asp-action="UpdatePermission" method="post">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Can Read</th>
+                <th>Can Write</th>
+                <th>Can Delete</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.UserName
+                        @if (item.IsAdmin)
+                        {
+                            <span class="badge bg-secondary ms-1">Admin</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (!item.IsAdmin)
+                        {
+                            <input type="checkbox" name="canRead" value="true" @(item.CanRead ? "checked" : "") />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Always</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!item.IsAdmin)
+                        {
+                            <input type="checkbox" name="canWrite" value="true" @(item.CanWrite ? "checked" : "") />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Always</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!item.IsAdmin)
+                        {
+                            <input type="checkbox" name="canDelete" value="true" @(item.CanDelete ? "checked" : "") />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Always</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!item.IsAdmin)
+                        {
+                            <form asp-action="UpdatePermission" method="post" style="display:inline;">
+                                <input type="hidden" name="userId" value="@item.UserId" />
+                                <input type="hidden" name="libraryId" value="@item.LibraryId" />
+                                <input type="hidden" name="canRead" value="@item.CanRead.ToString().ToLower()" />
+                                <input type="hidden" name="canWrite" value="@item.CanWrite.ToString().ToLower()" />
+                                <input type="hidden" name="canDelete" value="@item.CanDelete.ToString().ToLower()" />
+                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Admin access</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+

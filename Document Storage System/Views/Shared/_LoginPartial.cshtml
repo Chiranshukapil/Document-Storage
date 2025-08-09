@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Document_Storage_System.Models
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="d-flex align-items-center gap-2">
+        <span class="text-white">
+            👤 <strong>@User.Identity?.Name</strong>
+        </span>
+        <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-outline-light">
+                🚪 Logout
+            </button>
+        </form>
+    </div>
+}
+else
+{
+    <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-light" asp-area="Identity" asp-page="/Account/Login">🔑 Login</a>
+        <a class="btn btn-sm btn-outline-light" asp-area="Identity" asp-page="/Account/Register">➕ Register</a>
+    </div>
+}

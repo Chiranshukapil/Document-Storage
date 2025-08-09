@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Document_Storage_System.Models.Entities.Topic>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
+@inject SignInManager<AppUser> SignInManager
+
+@{
+    ViewData["Title"] = "Topic Hierarchy";
+    var libraryId = ViewBag.LibraryId as int?;
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
+    var userId = currentUser?.Id;
+
+    var context = Context.RequestServices.GetService(typeof(Document_Storage_System.Data.ApplicationDbContext)) as Document_Storage_System.Data.ApplicationDbContext;
+    var canWrite = context.LibraryPermissions
+        .Any(lp => lp.LibraryId == libraryId && lp.UserId == userId && lp.CanWrite);
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">
+        <i class="bi bi-diagram-3-fill text-primary"></i> Topic Hierarchy
+    </h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="mb-3">
+        @if (isAdmin || canWrite)
+        {
+            <a class="btn btn-primary" asp-action="Create" asp-route-libraryId="@libraryId">
+                <i class="bi bi-plus-lg"></i> Add New Topic
+            </a>
+        }
+        <a class="btn btn-secondary" asp-action="Index" asp-route-libraryId="@libraryId">
+            <i class="bi bi-list"></i> Back to Topics List
+        </a>
+    </div>
+
+    <div id="topicTree" class="border rounded p-3 bg-light">
+        <em>Loading topics...</em>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch(`/Topic/GetTopicHierarchy?libraryId=@libraryId`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Error fetching topics");
+                    return response.json();
+                })
+                .then(data => {
+                    const html = buildTree(data, null);
+                    document.getElementById("topicTree").innerHTML = html;
+                })
+                .catch(err => {
+                    document.getElementById("topicTree").innerHTML =
+                        `<div class="alert alert-danger">${err}</div>`;
+                });
+
+            function buildTree(topics, parentId) {
+                const children = topics.filter(t => t.parentTopicId === parentId);
+                if (children.length === 0) return "";
+
+                let html = "<ul class='list-unstyled ms-3'>";
+                for (const child of children) {
+                    html += `
+                        <li>
+                            <i class="bi bi-folder-fill text-warning"></i>
+                            <strong>${child.name}</strong>
+                            ${buildTree(topics, child.topicId)}
+                        </li>
+                    `;
+                }
+                html += "</ul>";
+                return html;
+            }
+        });
+    </script>
+}

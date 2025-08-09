@@ -1,0 +1,26 @@
+﻿@model Document_Storage_System.Models.Entities.Topic
+@{
+    ViewData["Title"] = "Delete Topic";
+    var hasAccess = Model != null;
+}
+
+@if (!hasAccess)
+{
+    <div class="alert alert-danger">
+        You do not have permission to delete this topic.
+    </div>
+}
+else
+{
+    <h2>Delete Topic</h2>
+
+    <div class="alert alert-danger">
+        Are you sure you want to delete the topic: <strong>@Model.Name</strong>?
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="TopicId" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" asp-route-libraryId="@Model.LibraryId" class="btn btn-secondary">Cancel</a>
+    </form>
+}

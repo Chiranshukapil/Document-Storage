@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Document_Storage_System.Models.Entities.Library>
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject UserManager<AppUser> UserManager
+
+@{
+    ViewData["Title"] = "Libraries";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isAdmin = await UserManager.IsInRoleAsync(currentUser, "Admin");
+}
+
+<div class="container mt-3">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">📚 Libraries</h2>
+        <a class="btn btn-primary" asp-action="Create">
+            ➕ Add New Library
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No libraries found.</div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Description</th>
+                    <th>Created</th>
+                    <th style="width: 380px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lib in Model)
+                {
+                    <tr>
+                        <td>@lib.Name</td>
+                        <td>@(lib.Department != null ? lib.Department.Name : "Not Assigned")</td>
+                        <td>@lib.Description</td>
+                        <td>@lib.CreatedAt.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+
+                                <!-- Existing Topics button -->
+                                <a class="btn btn-sm btn-info" asp-controller="Topic" asp-action="Index" asp-route-libraryId="@lib.LibraryId">
+                                    📂 Topics
+                                </a>
+
+                                <!-- NEW: View Hierarchy button -->
+                                <a class="btn btn-sm btn-success" asp-controller="Topic" asp-action="TopicHierarchy" asp-route-libraryId="@lib.LibraryId">
+                                    🌳 View Hierarchy
+                                </a>
+
+                                @if (isAdmin || await UserManager.IsInRoleAsync(currentUser, "Admin") ||
+                                                        await Context.RequestServices
+                                                        .GetRequiredService<Document_Storage_System.Data.ApplicationDbContext>()
+                                                        .LibraryPermissions
+                                                        .AnyAsync(lp => lp.LibraryId == lib.LibraryId && lp.UserId == currentUser.Id && lp.CanWrite))
+                                {
+                                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@lib.LibraryId">
+                                        ✏️ Edit
+                                    </a>
+                                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@lib.LibraryId">
+                                        🗑️ Delete
+                                    </a>
+                                }
+
+                                @if (isAdmin)
+                                {
+                                    <a class="btn btn-sm btn-secondary" asp-controller="LibraryPermission" asp-action="Index" asp-route-libraryId="@lib.LibraryId">
+                                        🔐 Manage Access
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>

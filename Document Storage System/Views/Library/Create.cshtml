@@ -1,0 +1,55 @@
+﻿@model Document_Storage_System.Models.Entities.Library
+
+@{
+    ViewData["Title"] = "Create Library";
+    var departments = ViewBag.Departments as List<Document_Storage_System.Models.Entities.Department>;
+    var errors = ViewBag.ValidationErrors as List<string>;
+}
+
+<h2>Create New Library</h2>
+
+@if (errors != null && errors.Any())
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var err in errors)
+            {
+                <li>@err</li>
+            }
+        </ul>
+    </div>
+}
+
+
+<form asp-action="Create" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="DepartmentId" class="form-label">Department</label>
+        <select asp-for="DepartmentId" class="form-select">
+            <option value="">-- Select Department --</option>
+            @foreach (var dept in departments)
+            {
+                <option value="@dept.DepartmentId">@dept.Name</option>
+            }
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
